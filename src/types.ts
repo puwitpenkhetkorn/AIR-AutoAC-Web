@@ -30,6 +30,9 @@ export interface DeviceSettings {
   hot?: number
   autoOn?: boolean
   preOpenMin?: number
+  irMode?: 'protocol' | 'learned'
+  irLearned?: boolean[] // length 4, index ตาม IrButton (เปิด, ปิด, อุณหภูมิ+, อุณหภูมิ-)
+  irLearnStatus?: string // "idle" | "listening:<button>" | "ok:<button>" | "timeout:<button>" | "busy"
 }
 
 export interface ScheduleSlot {

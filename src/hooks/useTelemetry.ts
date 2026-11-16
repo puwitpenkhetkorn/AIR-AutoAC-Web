@@ -48,6 +48,12 @@ export function useTelemetry(deviceId: string | null) {
           hot: Number(attrs.hot),
           autoOn: Boolean(attrs.autoOn),
           preOpenMin: attrs.preOpenMin !== undefined ? Number(attrs.preOpenMin) : undefined,
+          irMode: Number(attrs.irMode) === 1 ? 'learned' : 'protocol',
+          irLearned:
+            typeof attrs.irLearned === 'string'
+              ? attrs.irLearned.split(',').map((c) => c.trim() === '1')
+              : [false, false, false, false],
+          irLearnStatus: typeof attrs.irLearnStatus === 'string' ? attrs.irLearnStatus : 'idle',
         },
         schedule: parseSchedule(attrs.schedule),
         holidays: parseHolidays(attrs.holidays),
