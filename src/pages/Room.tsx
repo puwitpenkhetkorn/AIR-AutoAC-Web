@@ -14,7 +14,8 @@ const TODAY = new Date().toLocaleDateString('th-TH', { weekday: 'long', day: 'nu
 export default function Room() {
   const { selectedRoom } = useRooms()
   const deviceId = selectedRoom?.id ?? null
-  const { telemetry, active, stale, loading, error, refresh } = useTelemetry(deviceId)
+  const { telemetry, settings, active, stale, loading, error, refresh } = useTelemetry(deviceId)
+  const learnedMode = settings?.irMode === 'learned'
   const { send, sending } = useRpc(deviceId)
   const [localSetTemp, setLocalSetTemp] = useState<number | null>(null)
 
@@ -125,39 +126,43 @@ export default function Room() {
           </button>
         </div>
 
-        <div className="control-group">
-          <label id="modeLabel">โหมด</label>
-          <div className="seg" role="group" aria-labelledby="modeLabel">
-            {AC_MODES.map((m) => (
-              <button
-                key={m.value}
-                type="button"
-                disabled={disabled}
-                className={telemetry?.ac_mode === m.value ? 'sel' : ''}
-                onClick={() => send('mode', m.value)}
-              >
-                {m.label}
-              </button>
-            ))}
+        {!learnedMode && (
+          <div className="control-group">
+            <label id="modeLabel">โหมด</label>
+            <div className="seg" role="group" aria-labelledby="modeLabel">
+              {AC_MODES.map((m) => (
+                <button
+                  key={m.value}
+                  type="button"
+                  disabled={disabled}
+                  className={telemetry?.ac_mode === m.value ? 'sel' : ''}
+                  onClick={() => send('mode', m.value)}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="control-group">
-          <label id="fanLabel">แรงลม</label>
-          <div className="seg" role="group" aria-labelledby="fanLabel">
-            {AC_FANS.map((f) => (
-              <button
-                key={f.value}
-                type="button"
-                disabled={disabled}
-                className={telemetry?.ac_fan === f.value ? 'sel' : ''}
-                onClick={() => send('fan', f.value)}
-              >
-                {f.label}
-              </button>
-            ))}
+        {!learnedMode && (
+          <div className="control-group">
+            <label id="fanLabel">แรงลม</label>
+            <div className="seg" role="group" aria-labelledby="fanLabel">
+              {AC_FANS.map((f) => (
+                <button
+                  key={f.value}
+                  type="button"
+                  disabled={disabled}
+                  className={telemetry?.ac_fan === f.value ? 'sel' : ''}
+                  onClick={() => send('fan', f.value)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="ctl-actions">
           <button type="button" className="btn-secondary" disabled={disabled} onClick={() => send('sync')}>

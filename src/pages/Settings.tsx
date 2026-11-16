@@ -7,6 +7,14 @@ import RoomSelect from '../components/RoomSelect'
 import { Icon } from '../components/IconSprite'
 import { Link } from 'react-router-dom'
 
+// ลำดับต้องตรงกับ autoac::IrButton ฝั่งเฟิร์มแวร์ (PowerOn=0, PowerOff=1, TempUp=2, TempDown=3)
+const IR_LEARN_BUTTONS = [
+  { key: 'power_on', label: 'เปิด' },
+  { key: 'power_off', label: 'ปิด' },
+  { key: 'temp_up', label: 'อุณหภูมิ +1' },
+  { key: 'temp_down', label: 'อุณหภูมิ -1' },
+] as const
+
 // SC-M09 — ตั้งค่า (ค่าตั้งแบบสไลเดอร์ ตาม SPEC.md ข้อ 4)
 export default function Settings() {
   const { role, userId, logout } = useAuth()
@@ -141,6 +149,67 @@ export default function Settings() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="card">
+          <h3 className="section-caption">โหมด IR</h3>
+          <div className="auto-row">
+            <span>
+              <b>เรียนรู้จากรีโมทจริง</b>
+            </span>
+            <button
+              type="button"
+              className="toggle"
+              role="switch"
+              aria-checked={s.irMode === 'learned'}
+              disabled={!isAdmin || sending}
+              onClick={() => setSetting('irMode', s.irMode === 'learned' ? 0 : 1)}
+            >
+              <span />
+            </button>
+          </div>
+
+          {s.irMode === 'learned' && (
+            <ul className="room-list">
+              {IR_LEARN_BUTTONS.map((btn, i) => {
+                const learned = Boolean(s.irLearned?.[i])
+                const status = s.irLearnStatus ?? 'idle'
+                const listening = status === `listening:${btn.key}`
+                return (
+                  <li key={btn.key} className="room-row">
+                    <span>{btn.label}</span>
+                    <span className={`badge ${learned ? 'green' : 'red'}`}>
+                      {learned ? 'เรียนรู้แล้ว' : 'ยังไม่เรียนรู้'}
+                    </span>
+                    {listening ? (
+                      <>
+                        <span>กำลังรอสัญญาณ... เล็งรีโมทแล้วกด</span>
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          disabled={sending}
+                          onClick={() => send('setSetting', { key: 'irLearnCancel', value: 0 })}
+                        >
+                          ยกเลิก
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        disabled={!isAdmin || sending}
+                        onClick={() => send('setSetting', { key: 'irLearnStart', value: i })}
+                      >
+                        เรียนรู้
+                      </button>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          )}
         </div>
       )}
 
