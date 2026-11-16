@@ -177,6 +177,7 @@ export default function Settings() {
                 const learned = Boolean(s.irLearned?.[i])
                 const status = s.irLearnStatus ?? 'idle'
                 const listening = status === `listening:${btn.key}`
+                const anyListening = status.startsWith('listening:')
                 return (
                   <li key={btn.key} className="room-row">
                     <span>{btn.label}</span>
@@ -189,7 +190,7 @@ export default function Settings() {
                         <button
                           type="button"
                           className="btn-secondary"
-                          disabled={sending}
+                          disabled={!isAdmin || sending}
                           onClick={() => send('setSetting', { key: 'irLearnCancel', value: 0 })}
                         >
                           ยกเลิก
@@ -199,7 +200,7 @@ export default function Settings() {
                       <button
                         type="button"
                         className="btn-secondary"
-                        disabled={!isAdmin || sending}
+                        disabled={!isAdmin || sending || anyListening}
                         onClick={() => send('setSetting', { key: 'irLearnStart', value: i })}
                       >
                         เรียนรู้
