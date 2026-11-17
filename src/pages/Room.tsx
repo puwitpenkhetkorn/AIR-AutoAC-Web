@@ -33,6 +33,16 @@ export default function Room() {
     await send(on ? 'on' : 'off')
   }
 
+  const [calibrateInput, setCalibrateInput] = useState('')
+
+  async function calibrateTemp() {
+    const v = Number(calibrateInput)
+    if (!Number.isFinite(v) || v < TEMP_MIN || v > TEMP_MAX) return
+    await send('setSetting', { key: 'calibrateTemp', value: v })
+    setLocalSetTemp(v)
+    setCalibrateInput('')
+  }
+
   return (
     <section className="page" data-screen="SC-M04">
       <div className="home-head">
@@ -125,6 +135,26 @@ export default function Room() {
             <Icon name="plus" />
           </button>
         </div>
+
+        {learnedMode && (
+          <div className="control-group">
+            <label id="calibrateLabel">ซิงค์อุณหภูมิจริง (ดูจากจอแอร์)</label>
+            <div className="ctl-actions">
+              <input
+                type="number"
+                inputMode="numeric"
+                aria-labelledby="calibrateLabel"
+                placeholder={`${TEMP_MIN}-${TEMP_MAX}`}
+                value={calibrateInput}
+                disabled={disabled}
+                onChange={(e) => setCalibrateInput(e.target.value)}
+              />
+              <button type="button" className="btn-secondary" disabled={disabled || calibrateInput === ''} onClick={calibrateTemp}>
+                ซิงค์
+              </button>
+            </div>
+          </div>
+        )}
 
         {!learnedMode && (
           <div className="control-group">
