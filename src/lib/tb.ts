@@ -178,7 +178,9 @@ interface AttrEntry {
 }
 
 export async function tbGetSharedAttributes(token: string, deviceId: string): Promise<Record<string, unknown>> {
-  const res = await tbFetch(`/api/plugins/telemetry/DEVICE/${deviceId}/values/attributes/SHARED_SCOPE`, token)
+  // บอร์ดส่งขึ้น v1/devices/me/attributes ซึ่ง ThingsBoard เก็บเป็น CLIENT_SCOPE (ไม่ใช่ SHARED_SCOPE)
+  // อ่านผิด scope มาตลอด — emptyMin/hot/irMode ฯลฯ ไม่เคยอ่านได้จริงถ้าไม่มี rule chain คัดลอกข้าม scope ให้
+  const res = await tbFetch(`/api/plugins/telemetry/DEVICE/${deviceId}/values/attributes/CLIENT_SCOPE`, token)
   assertOk(res)
   const body = await readJson<AttrEntry[]>(res)
   const out: Record<string, unknown> = {}
