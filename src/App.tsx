@@ -13,6 +13,7 @@ import Holidays from './pages/Holidays'
 import History from './pages/History'
 import Settings from './pages/Settings'
 import Alerts from './pages/Alerts'
+import SdLog from './pages/SdLog'
 import IconSprite from './components/IconSprite'
 import BodyClassSync from './components/BodyClassSync'
 
@@ -37,6 +38,7 @@ export default function App() {
                 <Route path="/history" element={<History />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/alerts" element={<Alerts />} />
+                <Route path="/sdlog" element={<SdLog />} />
               </Route>
             </Route>
 

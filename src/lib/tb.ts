@@ -2,7 +2,7 @@
 import { TB_HOST, FETCH_TIMEOUT_MS, RPC_TIMEOUT_MS } from '../config'
 import { apiFetch, assertOk, readJson } from './apiFetch'
 import { ApiError } from './apiError'
-import type { AcEvent, DeviceInfo, Holidays, Role, Schedule, Telemetry } from '../types'
+import type { AcEvent, DeviceInfo, Holidays, Role, SchedulePeriods, Telemetry } from '../types'
 
 /** เรียกเมื่อเจอ 401 ระหว่างใช้งาน (ไม่ใช่ตอน login) — ให้ผู้เรียก logout */
 let onUnauthorized: (() => void) | null = null
@@ -114,7 +114,11 @@ interface TsEntry {
 }
 
 export async function tbGetLatestTelemetry(token: string, deviceId: string): Promise<Telemetry> {
-  const keys = ['temp', 'humidity', 'occupied', 'ac_on', 'ac_set_temp', 'ac_mode', 'ac_fan']
+  const keys = [
+    'temp', 'humidity', 'occupied', 'ac_on', 'ac_set_temp', 'ac_mode', 'ac_fan',
+    'thermalPresent', 'thermalPixels', 'thermalMax', 'thermalMin',
+    'radarState', 'radarMoveDistCm', 'radarMoveEnergy', 'radarStaticDistCm', 'radarStaticEnergy', 'radarDetectRangeCm',
+  ]
   const res = await tbFetch(
     `/api/plugins/telemetry/DEVICE/${deviceId}/values/timeseries?keys=${keys.join(',')}`,
     token,
@@ -129,8 +133,10 @@ export async function tbGetLatestTelemetry(token: string, deviceId: string): Pro
       if (!entry) continue
       latestTs = Math.max(latestTs, entry.ts)
       const raw = entry.value
-      if (key === 'occupied' || key === 'ac_on') {
+      if (key === 'occupied' || key === 'ac_on' || key === 'thermalPresent') {
         ;(out as Record<string, unknown>)[key] = raw === 'true' || raw === '1'
+      } else if (key === 'thermalPixels') {
+        out.thermalPixels = String(raw).split(',').map(Number)
       } else {
         ;(out as Record<string, unknown>)[key] = Number(raw)
       }
@@ -188,19 +194,28 @@ export async function tbGetSharedAttributes(token: string, deviceId: string): Pr
   return out
 }
 
-export function parseSchedule(raw: unknown): Schedule {
-  if (Array.isArray(raw)) return raw as Schedule
+// บอร์ดส่ง schedulePeriods เป็น array of arrays แบบย่อ (ประหยัดขนาด ดู net_task.cpp publishSchedule):
+// [id, day, startMin, endMin, validFromDay, validToDay, enabled, name]
+export function parseSchedulePeriods(raw: unknown): SchedulePeriods {
+  let rows: unknown = raw
   if (typeof raw === 'string') {
     try {
-      return JSON.parse(raw) as Schedule
+      rows = JSON.parse(raw)
     } catch {
-      /* ignore */
+      return []
     }
   }
-  return Array.from({ length: 7 }, () => [
-    { en: false, s: 480, e: 1020 },
-    { en: false, s: 480, e: 1020 },
-  ])
+  if (!Array.isArray(rows)) return []
+  return (rows as unknown[][]).map((r) => ({
+    id: Number(r[0]),
+    day: Number(r[1]),
+    startMin: Number(r[2]),
+    endMin: Number(r[3]),
+    validFromDay: Number(r[4]),
+    validToDay: Number(r[5]),
+    enabled: Boolean(r[6]),
+    name: String(r[7] ?? ''),
+  }))
 }
 
 export function parseHolidays(raw: unknown): Holidays {

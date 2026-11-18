@@ -21,6 +21,16 @@ export interface Telemetry {
   ac_set_temp?: number
   ac_mode?: number
   ac_fan?: number
+  thermalPresent?: boolean
+  thermalPixels?: number[] // 64 ค่า (8x8), undefined ถ้า thermalPresent เป็น false
+  thermalMax?: number
+  thermalMin?: number
+  radarState?: number // 0=ไม่มีเป้าหมาย 1=เคลื่อนไหว 2=นิ่ง 3=ทั้งสอง
+  radarMoveDistCm?: number
+  radarMoveEnergy?: number
+  radarStaticDistCm?: number
+  radarStaticEnergy?: number
+  radarDetectRangeCm?: number
   ts?: number
 }
 
@@ -35,13 +45,19 @@ export interface DeviceSettings {
   irLearnStatus?: string // "idle" | "listening:<button>" | "ok:<button>" | "timeout:<button>" | "busy"
 }
 
-export interface ScheduleSlot {
-  en: boolean
-  s: number // นาทีจากเที่ยงคืน
-  e: number
+// คาบเรียน 1 รายการ — ตรงกับ autoac::SchedulePeriod ฝั่งเฟิร์มแวร์
+export interface SchedulePeriod {
+  id: number // index+1 ใน array ฝั่งบอร์ด (ใช้แก้ไข/ลบ)
+  day: number // 0=จันทร์..6=อาทิตย์
+  startMin: number
+  endMin: number
+  validFromDay: number // days-since-epoch, 0 = ไม่จำกัด
+  validToDay: number
+  enabled: boolean
+  name: string
 }
 
-export type Schedule = ScheduleSlot[][] // [day 0-6][slot 0-1]
+export type SchedulePeriods = SchedulePeriod[]
 
 export type Holidays = string[] // YYYY-MM-DD
 

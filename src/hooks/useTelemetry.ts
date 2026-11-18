@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { tbGetDeviceActive, tbGetLatestTelemetry, tbGetSharedAttributes, parseSchedule, parseHolidays } from '../lib/tb'
+import { tbGetDeviceActive, tbGetLatestTelemetry, tbGetSharedAttributes, parseSchedulePeriods, parseHolidays } from '../lib/tb'
 import { apiErrorText } from '../lib/apiError'
 import { POLL_MS, STALE_MS } from '../config'
-import type { DeviceSettings, Holidays, Schedule, Telemetry } from '../types'
+import type { DeviceSettings, Holidays, SchedulePeriods, Telemetry } from '../types'
 
 interface TelemetryState {
   telemetry: Telemetry | null
   settings: DeviceSettings | null
-  schedule: Schedule | null
+  schedule: SchedulePeriods | null
   holidays: Holidays | null
   active: boolean | undefined
   stale: boolean
@@ -55,7 +55,7 @@ export function useTelemetry(deviceId: string | null) {
               : [false, false, false, false],
           irLearnStatus: typeof attrs.irLearnStatus === 'string' ? attrs.irLearnStatus : 'idle',
         },
-        schedule: parseSchedule(attrs.schedule),
+        schedule: parseSchedulePeriods(attrs.schedulePeriods),
         holidays: parseHolidays(attrs.holidays),
         active,
         stale,

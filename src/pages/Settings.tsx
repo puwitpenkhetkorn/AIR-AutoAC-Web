@@ -197,14 +197,29 @@ export default function Settings() {
                         </button>
                       </>
                     ) : (
-                      <button
-                        type="button"
-                        className="btn-secondary"
-                        disabled={!isAdmin || sending || anyListening}
-                        onClick={() => send('setSetting', { key: 'irLearnStart', value: i })}
-                      >
-                        เรียนรู้
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          disabled={!isAdmin || sending || anyListening}
+                          onClick={() => send('setSetting', { key: 'irLearnStart', value: i })}
+                        >
+                          เรียนรู้
+                        </button>
+                        {learned && (
+                          <button
+                            type="button"
+                            className="btn-secondary danger"
+                            disabled={!isAdmin || sending || anyListening}
+                            onClick={async () => {
+                              await send('setSetting', { key: 'irClear', value: i })
+                              refresh()
+                            }}
+                          >
+                            ลบ
+                          </button>
+                        )}
+                      </>
                     )}
                   </li>
                 )
@@ -219,6 +234,13 @@ export default function Settings() {
           <span>
             <Icon name="bell" />
             การแจ้งเตือน
+          </span>
+          <Icon name="chevron-right" className="ico chev" />
+        </Link>
+        <Link to="/sdlog">
+          <span>
+            <Icon name="history" />
+            Log บน microSD
           </span>
           <Icon name="chevron-right" className="ico chev" />
         </Link>

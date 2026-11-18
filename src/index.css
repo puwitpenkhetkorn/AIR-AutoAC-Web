@@ -92,6 +92,12 @@ main{max-width:1280px;margin:auto;padding:calc(20px + env(safe-area-inset-top)) 
 .menu-list span{display:flex;align-items:center;gap:9px}
 .menu-list .ico{width:17px;height:17px}.menu-list .chev{color:var(--muted)}
 .menu-list .logout{color:var(--danger-ink)}
+
+/* Log บน microSD (SdLog.tsx) — ฝังเว็บเซิร์ฟเวอร์ในตัวบอร์ดผ่าน iframe */
+.sdlog-newtab{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--fs-small);color:var(--primary-ink);text-decoration:none}
+.sdlog-newtab .ico{width:15px;height:15px}
+.sdlog-frame-card{margin-top:12px;padding:0;overflow:hidden}
+.sdlog-frame{width:100%;height:60vh;border:0;display:block;background:#11151c}
 .toggle{width:48px;height:28px;min-height:28px;padding:3px;border:0;border-radius:20px;background:#cbd5d3;transition:background .2s}
 .toggle span{display:block;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.15);transition:transform .2s}
 .toggle[aria-checked="true"]{background:var(--primary)}.toggle[aria-checked="true"] span{transform:translateX(20px)}
@@ -119,6 +125,7 @@ main{max-width:1280px;margin:auto;padding:calc(20px + env(safe-area-inset-top)) 
 .sheet-actions p{margin:0 0 4px;color:var(--muted);font-size:var(--fs-label)}
 button.btn-danger{min-height:46px;border:0;background:#fff0ef;color:var(--danger-ink)}
 button.btn-secondary{min-height:46px;border:1px solid rgba(15,143,131,.13);background:var(--primary-soft);color:var(--primary-ink)}
+button.btn-secondary.danger{border-color:rgba(214,69,58,.2);background:#fdeceb;color:var(--danger-ink)}
 @media (prefers-reduced-motion:reduce){.bottom-sheet[open]{animation:none}.toggle,.toggle span{transition:none}}
 
 /* สิทธิ์ (FRONTEND.md ข้อ 2.3): Admin = TENANT_ADMIN, User = CUSTOMER_USER — ซ่อน/ปิดเฉพาะส่วนแก้ไขของ Admin */
@@ -223,6 +230,23 @@ button:disabled{opacity:.42;cursor:not-allowed}
 .card-title .ico{width:18px;height:18px;color:var(--primary-ink)}
 .command-card strong{display:block;font-size:var(--fs-label);overflow-wrap:anywhere}
 .command-card p{margin:3px 0 0;color:var(--muted);font-size:var(--fs-small)}
+
+/* เซนเซอร์เสริม (AMG8833 heatmap + Rd-01 radar) — SensorPanel.tsx */
+.sensor-panel{margin-top:12px}
+.sensor-block{margin-top:10px}
+.sensor-block+.sensor-block{margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
+.sensor-block-title{margin:0 0 8px;font-size:var(--fs-small);font-weight:600;color:var(--muted)}
+.sensor-thermal{display:flex;gap:14px;align-items:center}
+.sensor-thermal canvas{border-radius:8px;border:1px solid var(--border);image-rendering:pixelated;width:140px;height:140px}
+.sensor-thermal-readout{display:flex;flex-direction:column;gap:10px}
+.sensor-label{display:block;font-size:11px;color:var(--muted)}
+.sensor-thermal-readout strong{font-size:var(--fs-label)}
+.sensor-radar-state{margin:0 0 10px;font-weight:700;font-size:var(--fs-label)}
+.sensor-energy-row{margin-bottom:10px}
+.sensor-energy-head{display:flex;justify-content:space-between;font-size:var(--fs-small);color:var(--muted);margin-bottom:4px}
+.sensor-energy-track{height:10px;border-radius:5px;background:var(--border);overflow:hidden}
+.sensor-energy-fill{height:100%;border-radius:5px;transition:width .3s ease}
+.sensor-radar-range{margin:4px 0 0;font-size:var(--fs-small);color:var(--muted)}
 .section-title{display:flex;align-items:center;justify-content:space-between;margin:6px 1px 0}
 .section-title strong{font-size:var(--fs-section)}
 .section-title span{color:var(--muted);font-size:var(--fs-small)}
@@ -347,6 +371,42 @@ button:disabled{opacity:.42;cursor:not-allowed}
 .holiday-row>span b{font-size:var(--fs-label)}.holiday-row>span small{color:var(--muted);font-size:var(--fs-small)}
 .holiday-row>button{display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;color:var(--danger-ink)}
 .holiday-row .ico{width:16px;height:16px}
+
+/* ตารางเรียน v2 (Schedule.tsx) — day pill + period card + FAB */
+.day-pill-row{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px}
+.day-pill{flex:none;min-width:44px;min-height:var(--tap);padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:var(--fs-label);font-weight:600;color:var(--text)}
+.day-pill.sel{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff}
+.period-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.period-card{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:var(--r-btn);background:var(--surface);box-shadow:var(--shadow)}
+.period-card-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.period-time{color:var(--primary-ink);font-weight:700;font-size:var(--fs-small)}
+.period-card strong{font-size:var(--fs-label);overflow-wrap:anywhere}
+.period-valid{margin:0;color:var(--muted);font-size:var(--fs-small)}
+.period-card-actions{display:flex;flex:none}
+.period-card-actions button{display:grid;place-items:center;width:40px;height:40px;min-height:40px;padding:0;border:0;background:transparent;color:var(--muted)}
+.period-card-actions button.danger{color:var(--danger-ink)}
+.period-card-actions .ico{width:16px;height:16px}
+.fab{position:fixed;right:18px;bottom:calc(72px + env(safe-area-inset-bottom));width:52px;height:52px;border-radius:50%;border:0;background:var(--primary-dark);color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(20,50,47,.25);z-index:5}
+.fab .ico{width:22px;height:22px}
+
+/* ปฏิทินวันหยุด v2 (Holidays.tsx) */
+.holiday-calendar{padding:14px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-head button{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;background:transparent;color:var(--text)}
+.cal-head strong{font-size:var(--fs-label)}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;color:var(--muted);font-size:var(--fs-small);margin-bottom:4px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-cell{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border:0;border-radius:10px;background:transparent;font-size:var(--fs-small)}
+.cal-cell.empty{pointer-events:none}
+.cal-cell.holiday{background:#ffefdd;color:#8f4e0e;font-weight:700}
+.cal-day-num{line-height:1.2}
+.cal-dot{width:5px;height:5px;border-radius:50%;background:#e07b00;margin-top:2px}
+.cal-cell.holiday .cal-dot{position:static}
+.cal-list{margin-top:14px;border-top:1px solid var(--border);padding-top:10px;display:grid;gap:10px}
+.cal-list-row{display:flex;align-items:center;gap:10px}
+.cal-list-row .cal-dot{flex:none;width:8px;height:8px;margin:0}
+.cal-list-row>div{flex:1;min-width:0}
+.cal-list-row button{display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;background:transparent;color:var(--danger-ink)}
 /* แผ่นฟอร์ม (Figma .sheet-form) */
 .sheet-form{display:flex;flex-direction:column;gap:12px;padding-top:5px}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:9px}
@@ -360,6 +420,9 @@ button:disabled{opacity:.42;cursor:not-allowed}
 .chart-tabs{display:flex;gap:2px;padding:3px;border-radius:var(--r-seg);background:var(--segment-bg)}
 .chart-tabs button{flex:1;border:0;border-radius:var(--r-seg-btn);background:transparent;font-size:var(--fs-eyebrow);font-weight:400}
 .chart-tabs button.sel{background:var(--surface);color:var(--primary-ink);font-weight:700;box-shadow:0 2px 7px rgba(30,60,57,.12)}
+.sd-status{margin:8px 2px 0;font-size:var(--fs-small)}
+.sd-status.ok{color:var(--primary-ink)}
+.sd-status.warn{color:var(--muted)}
 .chart{padding:10px}
 .chart-head{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:var(--fs-small)}
 .chart-head span{display:flex;align-items:center;gap:4px}

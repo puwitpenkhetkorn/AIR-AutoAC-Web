@@ -6,6 +6,7 @@ import { useRpc } from '../hooks/useRpc'
 import { ErrorView, LoadingView } from '../components/StateViews'
 import RoomSelect from '../components/RoomSelect'
 import { Icon } from '../components/IconSprite'
+import SensorPanel from '../components/SensorPanel'
 import { AC_FANS, AC_MODES, TEMP_MAX, TEMP_MIN } from '../config'
 
 const TODAY = new Date().toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -214,6 +215,8 @@ export default function Room() {
         <strong>{telemetry?.ac_on ? 'เปิดแอร์' : 'ปิดแอร์'}</strong>
         <p>ยังไม่ยืนยันสถานะแอร์จริง</p>
       </div>
+
+      <SensorPanel telemetry={telemetry} />
     </section>
   )
 }
