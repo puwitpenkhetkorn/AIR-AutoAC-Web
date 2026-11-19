@@ -2,8 +2,10 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { RoomProvider } from './context/RoomContext'
 import { ToastProvider } from './context/ToastContext'
+import { PushNotificationProvider } from './context/PushNotificationContext'
 import RequireAuth from './components/RequireAuth'
 import Layout from './components/Layout'
+import PushBanner from './components/PushBanner'
 import Login from './pages/Login'
 import Forgot from './pages/Forgot'
 import Rooms from './pages/Rooms'
@@ -29,7 +31,16 @@ export default function App() {
             <Route path="/forgot" element={<Forgot />} />
 
             <Route element={<RequireAuth />}>
-              <Route element={<RoomProvider><Layout /></RoomProvider>}>
+              <Route
+                element={
+                  <RoomProvider>
+                    <PushNotificationProvider>
+                      <PushBanner />
+                      <Layout />
+                    </PushNotificationProvider>
+                  </RoomProvider>
+                }
+              >
                 <Route path="/rooms" element={<Rooms />} />
                 <Route path="/room" element={<Room />} />
                 <Route path="/control" element={<Navigate to="/room" replace />} />
