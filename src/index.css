@@ -37,7 +37,7 @@
 *{box-sizing:border-box}
 body{margin:0;min-width:320px;background:var(--bg);color:var(--text);font:400 16px/1.5 var(--font)}
 button,input,select{font:inherit}
-main{max-width:1280px;margin:auto;padding:calc(20px + env(safe-area-inset-top)) 18px calc(96px + env(safe-area-inset-bottom))}
+main{max-width:1280px;margin:auto;padding:calc(28px + env(safe-area-inset-top)) 20px calc(96px + env(safe-area-inset-bottom))}
 [hidden]{display:none!important}
 
 /* หน้า (1 หน้า = 1 <section data-screen>) */
