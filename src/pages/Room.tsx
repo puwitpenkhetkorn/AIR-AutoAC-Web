@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { roomDisplayName, useRooms } from '../context/RoomContext'
 import { useTelemetry } from '../hooks/useTelemetry'
@@ -24,10 +24,19 @@ export default function Room() {
   const setTemp = localSetTemp ?? telemetry?.ac_set_temp ?? 24
   const disabled = offline || sending
 
+  // มือถือ/เว็บวิวบางตัวยิง event แตะ 1 ครั้งเป็น click มากกว่า 1 ครั้ง (ซ้อนกันในจังหวะเดียว ก่อน React re-render ทัน
+  // ทำให้ disabled ยังไม่ทันอัปเดต) — กันด้วย ref แบบ synchronous แทนพึ่ง state/disabled อย่างเดียว
+  const adjustingRef = useRef(false)
   async function adjustTemp(delta: number) {
-    const next = Math.min(TEMP_MAX, Math.max(TEMP_MIN, setTemp + delta))
-    setLocalSetTemp(next)
-    await send('temp', next)
+    if (adjustingRef.current) return
+    adjustingRef.current = true
+    try {
+      const next = Math.min(TEMP_MAX, Math.max(TEMP_MIN, setTemp + delta))
+      setLocalSetTemp(next)
+      await send('temp', next)
+    } finally {
+      adjustingRef.current = false
+    }
   }
 
   async function setPower(on: boolean) {
