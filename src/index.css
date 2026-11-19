@@ -144,6 +144,7 @@ body:not(.authed){background:linear-gradient(180deg,var(--primary-soft) 0,var(--
 .brand{display:flex;align-items:center;gap:9px;margin-top:5px}
 .brand-logo{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:var(--primary);color:#fff}
 .brand-logo .ico{width:24px;height:24px}
+.brand-logo-img{height:40px;width:auto;display:block}
 .brand-name{font-size:17px;font-weight:700;color:var(--primary-ink)}
 .login-head{display:grid;gap:4px}
 .eyebrow{margin:0;font-size:var(--fs-eyebrow);font-weight:600;color:var(--primary-ink)}
