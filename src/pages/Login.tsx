@@ -38,7 +38,7 @@ export default function Login() {
   return (
     <section className="page login-page" data-screen="SC-M01">
       <div className="brand">
-        <img src="/logo.jpg" alt="AIR — Auto AC Controller" className="brand-logo-img" />
+        <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="AIR — Auto AC Controller" className="brand-logo-img" />
       </div>
       <div className="login-head">
         <p className="eyebrow">ยินดีต้อนรับกลับ</p>
