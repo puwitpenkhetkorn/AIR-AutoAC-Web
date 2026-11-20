@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useRooms } from '../context/RoomContext'
 import { useTelemetry } from '../hooks/useTelemetry'
-import { useRpc } from '../hooks/useRpc'
+import { useRpcConfirmed } from '../hooks/useRpc'
 import { EmptyView, ErrorView, LoadingView } from '../components/StateViews'
 import RoomSelect from '../components/RoomSelect'
 import BottomSheet from '../components/BottomSheet'
@@ -33,7 +33,7 @@ export default function Schedule() {
   const { selectedRoom } = useRooms()
   const deviceId = selectedRoom?.id ?? null
   const { schedule, active, loading, error, refresh } = useTelemetry(deviceId)
-  const { send, sending } = useRpc(deviceId)
+  const { send, sending, status: syncStatus } = useRpcConfirmed(deviceId)
   const isAdmin = role === 'ADMIN'
   const offline = active === false
 
@@ -122,6 +122,17 @@ export default function Schedule() {
           <Icon name="wifi" />
           <span>
             <b>อุปกรณ์ออฟไลน์</b>สั่งงานไม่ได้
+          </span>
+        </div>
+      )}
+
+      {syncStatus !== 'idle' && (
+        <div className={`sync-banner sync-${syncStatus}`} role="status">
+          <Icon name={syncStatus === 'failed' ? 'wifi' : syncStatus === 'syncing' ? 'clock' : 'check'} />
+          <span>
+            {syncStatus === 'syncing' && 'กำลังส่งไปที่บอร์ด…'}
+            {syncStatus === 'synced' && 'ซิงค์ไปที่บอร์ดสำเร็จ'}
+            {syncStatus === 'failed' && 'ส่งไม่ถึงบอร์ด (ออฟไลน์หรือไม่ตอบสนอง) — ลองใหม่ตอนบอร์ดออนไลน์'}
           </span>
         </div>
       )}

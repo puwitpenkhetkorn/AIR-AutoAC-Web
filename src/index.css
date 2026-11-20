@@ -76,6 +76,13 @@ main{max-width:1280px;margin:auto;padding:calc(28px + env(safe-area-inset-top)) 
 .offline-banner>span{display:flex;flex-direction:column;flex:1;font-size:var(--fs-small)}
 .offline-banner b{font-size:var(--fs-eyebrow)}
 .offline-banner .ico{width:19px;height:19px;flex:none}
+
+/* สถานะ sync ตารางเรียนไปที่บอร์ด (two-way RPC ack) */
+.sync-banner{display:flex;align-items:center;gap:8px;padding:10px;border-radius:var(--r-btn);font-size:var(--fs-small)}
+.sync-banner .ico{width:19px;height:19px;flex:none}
+.sync-banner.sync-syncing{border:1px solid #c9def5;background:#eaf3fd;color:#366caa}
+.sync-banner.sync-synced{border:1px solid #bfe3c9;background:#eafaf0;color:#1f8a4d}
+.sync-banner.sync-failed{border:1px solid #f5c9c9;background:#fdeaea;color:#aa3636}
 /* แท็บตารางเรียน/วันหยุด (Figma .top-segment) */
 .top-segment{display:flex;gap:2px;padding:3px;border-radius:var(--r-seg);background:var(--segment-bg)}
 .top-segment a{flex:1;display:grid;place-items:center;min-height:var(--tap);border-radius:var(--r-seg-btn);color:var(--text);font-size:var(--fs-eyebrow);text-decoration:none}

@@ -249,3 +249,27 @@ export async function tbRpc(
   assertOk(res)
   return { ok: true }
 }
+
+/**
+ * two-way: ThingsBoard รอ ack จริงจากบอร์ด (เฟิร์มแวร์ตอบกลับทาง rpc/response ทันทีที่ได้รับ)
+ * ถ้าบอร์ดออฟไลน์/คำสั่งไปไม่ถึง จะ timeout (408/504) จริง — ใช้บอกสถานะ sync ตรงๆได้
+ * (ต่างจาก oneway ที่ ThingsBoard ตอบ ok ทันทีแค่รับเข้าคิว ไม่ว่าบอร์ดจะได้รับจริงหรือไม่)
+ */
+export async function tbRpcConfirmed(
+  token: string,
+  deviceId: string,
+  method: string,
+  params: unknown = {},
+): Promise<{ ok: boolean }> {
+  const res = await tbFetch(`/api/plugins/rpc/twoway/${deviceId}`, token, {
+    method: 'POST',
+    body: JSON.stringify({ method, params }),
+    timeoutMs: RPC_TIMEOUT_MS,
+  })
+  if (res.status === 408 || res.status === 504) {
+    throw new ApiError('device_timeout', { status: res.status })
+  }
+  assertOk(res)
+  const data = await readJson<{ ok?: boolean }>(res)
+  return { ok: data?.ok !== false }
+}
